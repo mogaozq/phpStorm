@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<data  >
+    <person>
+        <name>mohammad0</name>
+        <family >barbast0</family>
+        <id>0000</id>
+    </person>
+
+    <person>
+        <name>mohammad1</name>
+        <family>barbast1</family>
+        <id>0001</id>
+    </person>
+    <person>
+        <name>mohammad2</name>
+        <family>barbast2</family>
+        <id>0002</id>
+    </person>
+</data>
