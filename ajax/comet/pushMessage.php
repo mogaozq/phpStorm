@@ -1,6 +1,6 @@
 <?php
 
-define("MAX_TIMEOUT", 5);
+define("MAX_TIMEOUT", 40000);
 
 header("Content-Type: application/json");
 if (isset($_GET['sId'], $_GET['rId'], $_GET['time'])) {

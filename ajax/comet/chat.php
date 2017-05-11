@@ -1,5 +1,5 @@
 <?php
-if(!isset($_GET['sId'],$_GET['rId'])){
+if (!isset($_GET['sId'], $_GET['rId'])) {
     exit();
 }
 ?>
@@ -12,30 +12,31 @@ if(!isset($_GET['sId'],$_GET['rId'])){
         window.onload = function () {
             setTimeout(getNewMessages(), 1000);
 
-            window.setInterval(getNewMessages, 1000);
-
         }
         function getNewMessages() {
             var xhr = new XMLHttpRequest();
-            xhr.onreadystatechange = function () {
-                if (this.readyState == 4 && this.status == 200) {
+            xhr.onload = function () {
+                if ((xhr.status >= 200 && xhr.status <= 300 ) || xhr.status == 304) {
                     var max = document.getElementById("chatArea").getAttribute("time");
                     var json = JSON.parse(this.responseText);
                     for (var i = 0; i < json.length; i++) {
 
-                        document.getElementById("chatArea").value +=json[i].sender_id+": "+ json[i].message + "\n";
+                        document.getElementById("chatArea").value += json[i].sender_id + ": " + json[i].message + "\n";
                         if (json[i].createdAt > max) max = json[i].createdAt;
-
                     }
-                    document.getElementById("chatArea").setAttribute("time",max);
+                    document.getElementById("chatArea").setAttribute("time", max);
+                    window.clearTimeout(mytimeout);
+                    getNewMessages();
                 }
 
             }
             var sId = document.getElementById("myId").value;
             var rId = document.getElementById("recieverId").value;
             var time = document.getElementById("chatArea").getAttribute("time");
-            xhr.open("get", "http://localhost/phpStorm/ajax/reg/message.php?sId=" + sId + "&rId=" + rId + "&time=" + time, true);
+            xhr.open("get", "http://localhost/phpStorm/ajax/comet/pushMessage.php?sId=" + sId + "&rId=" + rId + "&time=" + time, true);
+            xhr.timeout= 10000;
             xhr.send();
+            mytimeout = window.setTimeout(getNewMessages,10000);
         }
         function sendMsg(event) {
             if (event.keyCode == 13) {
@@ -46,14 +47,14 @@ if(!isset($_GET['sId'],$_GET['rId'])){
                 xhr.onreadystatechange = function () {
                     if (this.readyState == 4 && this.status == 200) {
                         var response = this.responseText;
-                        if(response=="1"){
+                        if (response == "1") {
                             console.log("message has sent seccessfully");
-                        }else{
+                        } else {
                             console.log("message send error.");
                         }
                     }
                 };
-                xhr.open("get", "http://localhost/phpStorm/ajax/reg/send.php?" + "sId=" + sId + "&rId=" + rId + "&message=" +'"'+ string+'"', true);
+                xhr.open("get", "http://localhost/phpStorm/ajax/reg/send.php?" + "sId=" + sId + "&rId=" + rId + "&message=" + '"' + string + '"', true);
                 xhr.send();
                 document.getElementById("messageArea").value = "";
 
@@ -62,15 +63,15 @@ if(!isset($_GET['sId'],$_GET['rId'])){
     </script>
 </head>
 <body>
-myId <input id="myId" type="number" value="<?php echo $_GET['sId'];?>"/>
+myId <input id="myId" type="number" value="<?php echo $_GET['sId']; ?>"/>
 <br/>
-recieverId <input id="recieverId" type="number" value="<?php echo $_GET['rId'];?>"/>
+recieverId <input id="recieverId" type="number" value="<?php echo $_GET['rId']; ?>"/>
 <br/>
 <br/>
 <br/>
 chat
 <br/>
-<textarea time="0" onclick="getNewMessages()" id="chatArea"
+<textarea time="0"  id="chatArea"
           style="margin: 0px; height: 200px; width: 322px;"></textarea>
 <br/>
 your message;
