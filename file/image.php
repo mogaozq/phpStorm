@@ -36,12 +36,15 @@ function saveToDb(){
     $stmt->store_result();// for save  affected rows
 
     if($stmt->affected_rows==1){
+        $stmt->close();
+        $connection->close();
         return true;
     }else{
+        $stmt->close();
+        $connection->close();
         return false;
     }
-    $stmt->close();
-    $connection->close();
+
 
 }
 ?>
