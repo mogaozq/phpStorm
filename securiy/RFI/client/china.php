@@ -1,0 +1,1 @@
+capital of china is <h2>beijing</h2>
