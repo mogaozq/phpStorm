@@ -17,12 +17,6 @@ if (isset($_GET['signUp'])) {
 
 ?>
     <form action="sign%20up.php">
-        firstname
-        <input type="text" name="firstname" required>
-        <br/>
-        lasname
-        <input type="text" name="lastname" required>
-        <br/>
         email
         <input type="text" name="email" required>
         <br/>
@@ -59,24 +53,21 @@ function validate()
 function insertToDatabase()
 {
     global $errors;
-    $conn = new mysqli("localhost", "root", "", "university");
+    $conn = new mysqli("localhost", "root", "", "test");
     $conn->set_charset("utf8");
-    $username = $_GET['username'];
-    $conn->query("SELECT * FROM university.stt_table WHERE stt_username = '$username'");
+    $username = $conn->escape_string($_GET['username']);
+    $conn->query("SELECT * FROM test.user WHERE username = '$username'");
     if ($conn->affected_rows >= 1) {
         $errors['username'] = "this username already exists";
     } else {
-        $firstname = $_GET['firstname'];
-        $lastname = $_GET['lastname'];
-        $email = $_GET['email'];
-        $username = $_GET['username'];
-        $password = $_GET['password'];
+        $email = $conn->escape_string($_GET['email']);
+        $username = $conn->escape_string($_GET['username']);
+        $salt = "#!qm%*mog";
+        $password = sha1($_GET['password'] . $salt);
         $security = rand(100000, 1000000);
-        $conn->query("INSERT  INTO  stt_table (stt_firstname, stt_lastname, stt_email, stt_username, stt_password, security) VALUES ('$firstname' ,'$lastname' ,'$email' ,'$username' ,'$password' ,'$security' );");
-        sendVerifyEmail($username, $email, $security);
+        $conn->query("INSERT  INTO  test.user (username, password, email, security) VALUES ('$username' ,'$password' ,'$email', '$security' );");
+//        sendVerifyEmail($username, $email, $security);
         header("location: seccessfull sign up.php");
-        echo $conn->affected_rows;
-        echo "ok";
     }
     $conn->close();
 }
